@@ -1,17 +1,30 @@
 import pickle
 
 from Genobolitics import *
-from metabolitics.preprocessing import MetaboliticsTransformer
+from sklearn_utils.preprocessing import FoldChangeScaler
+from sklearn.pipeline import Pipeline
+from metabolitics.preprocessing import MetaboliticsTransformer, MetaboliticsPipeline
 
 genobolitics_transformer = MetaboliticsTransformer()
 genobolitics_transformer.analyzer = Genobolitics("recon2")
 
-gene_data = pickle.load(open("datasets/gene_data","rb"))
+X = pickle.load(open("datasets/gene_data_X","rb"))
+y = pickle.load(open("datasets/gene_data_y","rb"))
+print(len(X),len(y))
+pipe = Pipeline([
+    ('scaling', FoldChangeScaler(reference_label='healthy')),
+    ('LP_FVA', genobolitics_transformer),
+    ('Metabolotics', MetaboliticsPipeline(
+        ['reaction-diff',
+         'feature-selection',
+         'pathway_transformer']
+    ))
+])
 
-results = genobolitics_transformer.transform(gene_data)
 
-pickle.dump(results, open("results1.pickl", "wb"))
-pickle.dump(results, open("results1_backup.pickl", "wb"))
+results = pipe.fit_transform(X, y)
+pickle.dump(results, open("results2.pickl", "wb"))
+pickle.dump(results, open("results2_backup.pickl", "wb"))
 
 import pdb
 pdb.set_trace()
