@@ -2,16 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="44c9a7af-35ae-4708-8940-2aeb111dd59e" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/datasets/gene_data_X" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/datasets/gene_data_y" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/results2.pickl" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/results2_backup.pickl" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.ipynb_checkpoints/Untitled-checkpoint.ipynb" afterPath="$PROJECT_DIR$/.ipynb_checkpoints/Untitled-checkpoint.ipynb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.ipynb_checkpoints/parsing_database_to_fit_for_pipeline-checkpoint.ipynb" afterPath="$PROJECT_DIR$/.ipynb_checkpoints/parsing_database_to_fit_for_pipeline-checkpoint.ipynb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Genobolitics.py" afterPath="$PROJECT_DIR$/Genobolitics.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/genobolitics_transformer.py" afterPath="$PROJECT_DIR$/genobolitics_transformer.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/parsing_database_to_fit_for_pipeline.ipynb" afterPath="$PROJECT_DIR$/parsing_database_to_fit_for_pipeline.ipynb" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.ipynb_checkpoints/Untitled1-checkpoint.ipynb" afterPath="" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -25,8 +16,8 @@
       <file leaf-file-name="genobolitics_transformer.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/genobolitics_transformer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="20" column="6" lean-forward="true" selection-start-line="20" selection-start-column="6" selection-end-line="20" selection-end-column="6" />
+            <state relative-caret-position="396">
+              <caret line="22" column="0" lean-forward="true" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -311,8 +302,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/genobolitics_transformer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="20" column="6" lean-forward="true" selection-start-line="20" selection-start-column="6" selection-end-line="20" selection-end-column="6" />
+        <state relative-caret-position="396">
+          <caret line="22" column="0" lean-forward="true" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>
