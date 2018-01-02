@@ -19,6 +19,11 @@ class FoldChange:
 
 
 class Genobolitics(MetaboliticsAnalysis):
+    def __init__(self, *args, **kwargs):
+        super(Genobolitics, self).__init__(*args, **kwargs)
+        self.model.solver = 'cplex'
+        print('selected solver is: ', self.model.solver)
+        
     def set_objective(self, measured_genes):
         self.clean_objective()
         for r in self.model.reactions:
