@@ -82,6 +82,7 @@ def parse_database(geo_database_name, labels, index_column="IDENTIFIER"):
         gene_fold_change = get_genes_fold_changes(geo_df[[sample]])
         X.append(gene_fold_change)
         y.append(labels[sample])
+        
         print("{} added with length {}".format(sample, len(gene_fold_change)))
 
     return X, y
