@@ -44,7 +44,7 @@ class Genobolitics(MetaboliticsAnalysis):
 
         expr = reduce(lambda x, y: x.replace(*y), op + genes, reaction.gene_reaction_rule)
 
-        return eval(expr).fold_change if expr != '' else 0
+        return eval(expr).fold_change
 
     def get_gene_fold_change(self, gene, measured_genes):
         return measured_genes[gene]
