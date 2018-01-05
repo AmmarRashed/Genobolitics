@@ -5,6 +5,7 @@ click==6.7
 cobra==0.10.1
 configparser==3.5.0
 cplex==12.8.0.0
+Cython==0.27.3
 decorator==4.1.2
 dill==0.2.5
 docloud==1.0.257
@@ -49,10 +50,12 @@ pickleshare==0.7.4
 pkg-resources==0.0.0
 prompt-toolkit==1.0.15
 ptyprocess==0.5.2
+pybedtools==0.7.10
 PyFunctional==1.1.2
 Pygments==2.2.0
 PyHGNC==0.2.4
 PyMySQL==0.8.0
+pysam==0.13
 python-dateutil==2.6.1
 pytz==2017.3
 PyYAML==3.12
