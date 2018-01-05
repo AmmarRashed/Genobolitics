@@ -1,4 +1,5 @@
 import numpy as np
+import warnings
 from functools import reduce, lru_cache
 
 from metabolitics.analysis import MetaboliticsAnalysis
@@ -32,7 +33,7 @@ class Genobolitics(MetaboliticsAnalysis):
             try:
                 fold_change = self.get_reaction_fold_change(r, measured_genes)
             except Exception as e:
-                print('could not calculate fold changes for {}'.format(r))
+                warnings.warn('some reaction genes fold changes were not found, reaction is discarded!')
             
             r.objective_coefficient = fold_change
 
