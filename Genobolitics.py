@@ -31,7 +31,7 @@ class FoldChange:
     @staticmethod
     def replace_missing(*args, replace_with):
         replaced = [replace_with if o is None else o for o in args]
-        if not all(replaced):
+        if not all(args):
             warnings.warn('some operands are missing from logical expression!')
         return replaced
 
