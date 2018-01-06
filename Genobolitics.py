@@ -1,9 +1,11 @@
-import numpy as np
+import math
 import warnings
 from functools import reduce, lru_cache
 
+import pyhgnc
+import GEOparse
+import numpy as np
 from metabolitics.analysis import MetaboliticsAnalysis
-import GEOparse, pyhgnc
 
 
 class FoldChange:
@@ -12,42 +14,64 @@ class FoldChange:
 
     # OR IS MAX, MAX IS PLUS, THUS OR IS PLUS
     def __add__(self, other):
-        return FoldChange(max(self.fold_change, other.fold_change))
+        return FoldChange(FoldChange.max_with_missing_values(self.fold_change, other.fold_change))
 
     # AND IS MIN, MIN IS MINUS, THUS AND IS MINUS
     def __sub__(self, other):
-        return FoldChange(min(self.fold_change, other.fold_change))
+        return FoldChange(FoldChange.min_with_missing_values(self.fold_change, other.fold_change))
+
+    @staticmethod
+    def max_with_missing_values(*args):
+        return max(FoldChange.replace_missing(*args, replace_with=-math.inf))
+
+    @staticmethod
+    def min_with_missing_values(*args):
+        return min(FoldChange.replace_missing(*args, replace_with=math.inf))
+
+    @staticmethod
+    def replace_missing(*args, replace_with):
+        replaced = [replace_with if o is None else o for o in args]
+        if not all(replaced):
+            warnings.warn('some operands are missing from logical expression!')
+        return replaced
 
 
 class Genobolitics(MetaboliticsAnalysis):
     def __init__(self, *args, **kwargs):
         super(Genobolitics, self).__init__(*args, **kwargs)
-        self.model.solver = 'cplex'
-        self.model.solver.configuration.timeout = 10 * 60
+        self.model.solver = kwargs.get('solver', 'cplex')
+        self.model.solver.configuration.timeout = kwargs.get('timeout', 10 * 60)
 
     def set_objective(self, measured_genes):
         self.clean_objective()
         for r in self.model.reactions:
-            fold_change = 0
-            
-            try:
-                fold_change = self.get_reaction_fold_change(r, measured_genes)
-            except Exception as e:
-                warnings.warn('some reaction genes fold changes were not found, reaction is discarded!')
-            
-            r.objective_coefficient = fold_change
+            fold_change = self.get_reaction_fold_change(r, measured_genes)
+
+            # missing operands or missing reaction rules!
+            if fold_change in {math.inf, -math.inf, None}:
+                r.objective_coefficient = 0.0
+                warnings.warn('could not evaluate boolean expression, objective-coeff is set to ZERO!')
+            else:
+                r.objective_coefficient = fold_change
 
     def get_reaction_fold_change(self, reaction, measured_genes):
         op = [('or', '+'), ('and', '-')]
-        genes = [(gene, 'FoldChange({})'.format(self.get_gene_fold_change(gene, measured_genes))) for gene in
-                 self.get_reaction_genes(reaction)]
+        genes_fold_changes = [(gene, 'FoldChange({})'.format(self.get_gene_fold_change(gene, measured_genes)))
+                              for gene in self.get_reaction_genes(reaction)]
 
-        expr = reduce(lambda x, y: x.replace(*y), op + genes, reaction.gene_reaction_rule)
+        expr = reduce(lambda x, y: x.replace(*y), op + genes_fold_changes, reaction.gene_reaction_rule)
 
-        return eval(expr).fold_change
+        fold_change = None
+        if expr:
+            fold_change = eval(expr).fold_change
+        else:
+            # model returned the empty string as reaction rule
+            warnings.warn('model returned the empty string as reaction rule!')
+
+        return fold_change
 
     def get_gene_fold_change(self, gene, measured_genes):
-        return measured_genes[gene]
+        return measured_genes.get(gene, 'None')
 
     def get_reaction_genes(self, reaction):
         return [g.id for g in reaction.genes]
@@ -76,14 +100,13 @@ def get_genes_fold_changes(sample):
 
 def parse_database(geo_database_name, labels, index_column="IDENTIFIER"):
     geo_df = GEOparse.get_GEO(geo=geo_database_name).table.dropna().set_index(index_column)
-    samples_columns = [column for column in geo_df.columns if column.startswith('GSM')]
 
     X, y = [], []
     for sample in labels.keys():
         gene_fold_change = get_genes_fold_changes(geo_df[[sample]])
         X.append(gene_fold_change)
         y.append(labels[sample])
-        
+
         print("{} added with length {}".format(sample, len(gene_fold_change)))
 
     return X, y
