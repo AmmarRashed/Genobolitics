@@ -47,8 +47,8 @@ class Genobolitics(MetaboliticsAnalysis):
         for r in self.model.reactions:
             fold_change = self.get_reaction_fold_change(r, measured_genes)
 
-            # missing operands or missing reaction rules!
             if fold_change in {math.inf, -math.inf, None}:
+                # missing operands (math.inf, -math.inf) or missing reaction rules (None)!
                 r.objective_coefficient = 0.0
                 warnings.warn('could not evaluate boolean expression, objective-coeff is set to ZERO!')
             else:
