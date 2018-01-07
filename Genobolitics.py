@@ -1,8 +1,11 @@
+import math
+import warnings
+from functools import reduce, lru_cache
+
+import pyhgnc
+import GEOparse
 import numpy as np
-
 from metabolitics.analysis import MetaboliticsAnalysis
-
-from functools import reduce
 
 
 class FoldChange:
@@ -11,46 +14,99 @@ class FoldChange:
 
     # OR IS MAX, MAX IS PLUS, THUS OR IS PLUS
     def __add__(self, other):
-        return FoldChange(max(self.fold_change, other.fold_change))
+        return FoldChange(FoldChange.max_with_missing_values(self.fold_change, other.fold_change))
 
     # AND IS MIN, MIN IS MINUS, THUS AND IS MINUS
     def __sub__(self, other):
-        return FoldChange(min(self.fold_change, other.fold_change))
+        return FoldChange(FoldChange.min_with_missing_values(self.fold_change, other.fold_change))
+
+    @staticmethod
+    def max_with_missing_values(*args):
+        return max(FoldChange.replace_missing(*args, replace_with=-math.inf))
+
+    @staticmethod
+    def min_with_missing_values(*args):
+        return min(FoldChange.replace_missing(*args, replace_with=math.inf))
+
+    @staticmethod
+    def replace_missing(*args, replace_with):
+        replaced = [replace_with if o is None else o for o in args]
+        if not all(args):
+            warnings.warn('some operands are missing from logical expression!')
+        return replaced
 
 
 class Genobolitics(MetaboliticsAnalysis):
     def __init__(self, *args, **kwargs):
         super(Genobolitics, self).__init__(*args, **kwargs)
-        self.model.solver = 'cplex'
-        print('selected solver is: ', self.model.solver)
-        
+        self.model.solver = kwargs.get('solver', 'cplex')
+        self.model.solver.configuration.timeout = kwargs.get('timeout', 10 * 60)
+
     def set_objective(self, measured_genes):
         self.clean_objective()
         for r in self.model.reactions:
-            r.objective_coefficient = self.get_reaction_fold_change(r, measured_genes, duplicate_strategy=np.mean)
+            fold_change = self.get_reaction_fold_change(r, measured_genes)
 
-    def get_reaction_fold_change(self, reaction, measured_genes, duplicate_strategy):
+            if fold_change in {math.inf, -math.inf, None}:
+                # missing operands (math.inf, -math.inf) or missing reaction rules (None)!
+                r.objective_coefficient = 0.0
+                warnings.warn('could not evaluate boolean expression, objective-coeff is set to ZERO!')
+            else:
+                r.objective_coefficient = fold_change
+
+    def get_reaction_fold_change(self, reaction, measured_genes):
         op = [('or', '+'), ('and', '-')]
-        genes = [
-            (gene, 'FoldChange({})'.format(self.get_gene_fold_change(gene, measured_genes, duplicate_strategy, nan=-1)))
-            for gene in self.get_reaction_genes(reaction)]
-        expr = reduce(lambda x, y: x.replace(*y), op + genes, reaction.gene_reaction_rule)
-        if expr == "":
-            return 0.0
-        return eval(expr).fold_change
+        genes_fold_changes = [(gene, 'FoldChange({})'.format(self.get_gene_fold_change(gene, measured_genes)))
+                              for gene in self.get_reaction_genes(reaction)]
 
-    def get_gene_fold_change(self, gene, measured_genes, duplicate_strategy=np.mean, nan=-1):
-        try:
-            return duplicate_strategy(measured_genes[gene])
-        except KeyError:
-            return nan
+        expr = reduce(lambda x, y: x.replace(*y), op + genes_fold_changes, reaction.gene_reaction_rule)
+
+        fold_change = None
+        if expr:
+            fold_change = eval(expr).fold_change
+        else:
+            # model returned the empty string as reaction rule
+            warnings.warn('model returned the empty string as reaction rule!')
+
+        return fold_change
+
+    def get_gene_fold_change(self, gene, measured_genes):
+        return measured_genes.get(gene, 'None')
 
     def get_reaction_genes(self, reaction):
-        return [g.id for g in list(reaction.genes)]
+        return [g.id for g in reaction.genes]
 
 
+@lru_cache(maxsize=None)
+def lookup_gene(gene_symbol):
+    try:
+        query = lookup_gene.query
+    except Exception as e:
+        lookup_gene.query = query = pyhgnc.query()
 
-# measured_genes = pickle.load(open("datasets/gene_data","rb"))
-# measured_genes_sample_1 = measured_genes[0]
-# gb = Genobolitics("recon2")
-# gb.set_objective(measured_genes_sample_1)
+    return query.hgnc(symbol=gene_symbol)
+
+
+def get_genes_fold_changes(sample):
+    genes_fold_changes = dict()
+    for gene in np.unique(sample.index):
+        hgnc = lookup_gene(gene)
+
+        if hgnc:
+            genes_fold_changes["HGNC:{}".format(hgnc[0].identifier)] = np.median(sample.loc[gene])
+
+    return genes_fold_changes
+
+
+def parse_database(geo_database_name, labels, index_column="IDENTIFIER"):
+    geo_df = GEOparse.get_GEO(geo=geo_database_name).table.dropna().set_index(index_column)
+
+    X, y = [], []
+    for sample in labels.keys():
+        gene_fold_change = get_genes_fold_changes(geo_df[[sample]])
+        X.append(gene_fold_change)
+        y.append(labels[sample])
+
+        print("{} added with length {}".format(sample, len(gene_fold_change)))
+
+    return X, y
