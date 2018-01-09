@@ -10,20 +10,24 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.feature_selection import SelectKBest
-
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_score, recall_score, accuracy_score, f1_score
 from imblearn.over_sampling import RandomOverSampler
 
 import numpy as np, pandas as pd
 from collections import defaultdict
 from itertools import chain
-from sklearn.model_selection import KFold
+from sklearn.model_selection import StratifiedKFold
+from sklearn.decomposition import PCA
 
 class GenoClassifier:
-    def __init__(self, results_path, labels_path, diff=True, scale=False, select_features=False):
+    def __init__(self, results_path, labels_path, diff=True, scale=False, select_features=False, dim_reduct=False):
         results = pickle.load(open(results_path, 'rb'))
         labels = pickle.load(open(labels_path, 'rb'))
         self.binarize = lambda ls: [1 if l == 'unhealthy' else 0 for l in ls]
+        self.dim_reduct = dim_reduct
+        MetaboliticsPipeline(['reaction-diff',
+                              'pathway_transformer'])
 
         if diff:
             pipe = MetaboliticsPipeline(['reaction-diff',
@@ -40,11 +44,13 @@ class GenoClassifier:
         ]
 
         dataset = pd.DataFrame(samples, index=labels)
-
+        self.select_features = select_features
         if select_features:
-            self.feature_selection_pipe = Pipeline([('select_k_best', SelectKBest(k=100))])
+            # self.feature_selection = MetaboliticsPipeline(['feature-selection'])
+            self.feature_selection = Pipeline([('select_k_best', SelectKBest(k=100))])
         else:
-            self.feature_selection_pipe = None
+            self.feature_selection = None
+        #     self.feature_selection_pipe = None
 
         if scale:
             std_scalar = StandardScaler().fit(dataset, dataset.index)
@@ -53,6 +59,7 @@ class GenoClassifier:
             self.X, self.y = dataset, dataset.index
 
         self.X, self.y = np.array(self.X), np.array(self.y)
+        self.pca = PCA()
 
         self.models = [
               (RandomForestClassifier, {
@@ -86,7 +93,7 @@ class GenoClassifier:
 
     def _pipeline(self, X_train, X_test, y_train, y_test):
         try:
-            feature_selection = self.feature_selection_pipe.fit(X_train, y_train)
+            feature_selection = self.feature_selection.fit(X_train, y_train)
             X_train_f, y_train_f = RandomOverSampler(random_state=42). \
                 fit_sample(feature_selection.transform(X_train), y_train)
 
@@ -120,6 +127,17 @@ class GenoClassifier:
         return res
 
     def eval_model(self, model, X_train, y_train, X_test, y_test):
+        if self.select_features:
+            feature_selection = SelectKBest(k=100)
+            feature_selection.fit(X_train, y_train)
+            X_train = feature_selection.transform(X_train)
+            X_test = feature_selection.transform(X_test)
+        if self.dim_reduct:
+            pca = PCA()
+            pca.fit(X_train)
+            X_train = pca.transform(X_train)
+            X_test = pca.transform(X_test)
+
         model.fit(X_train, y_train)
         pred_y = self.binarize(model.predict(X_test))
         metrics = {'recall': recall_score, 'precision': precision_score, 'f1': f1_score,
@@ -130,19 +148,35 @@ class GenoClassifier:
         return res
 
 
-    def classify(self, k=10, model=None):
+    def classify(self, k=10, model=None, random_sampling=False, test_size=0.10):
         metrics = {'recall': 0, 'precision': 0, 'f1': 0,
                    'accuracy': 0}
-        kf = KFold(n_splits=k, random_state=42)
-        for train_index, test_index in kf.split(self.X, self.y):
-            X_train, X_test = self.X[train_index], self.X[test_index]
-            y_train, y_test = self.y[train_index], self.y[test_index]
-            if model is None:
-                pred = self._pipeline(X_train, X_test, y_train, y_test)
-            else:
-                pred = self.eval_model(model, X_train, y_train, X_test, y_test)
+        if k == -1:
+            X_train, X_test, y_train, y_test = train_test_split(self.X, self.y, test_size=test_size, random_state = 42)
+            pred = self.eval_model(model, X_train, y_train, X_test, y_test)
             for m in pred:
                 metrics[m] += pred[m]
+        else:
+            if random_sampling:
+                for i in range(k):
+                    X_train, X_test, y_train, y_test = train_test_split(self.X, self.y, test_size=test_size)
+                    if model is None:
+                        pred = self._pipeline(X_train, X_test, y_train, y_test)
+                    else:
+                        pred = self.eval_model(model, X_train, y_train, X_test, y_test)
+                    for m in pred:
+                        metrics[m] += pred[m]
+            else:
+                kf = StratifiedKFold(n_splits=k, random_state=42)
+                for train_index, test_index in kf.split(self.X, self.y):
+                    X_train, X_test = self.X[train_index], self.X[test_index]
+                    y_train, y_test = self.y[train_index], self.y[test_index]
+                    if model is None:
+                        pred = self._pipeline(X_train, X_test, y_train, y_test)
+                    else:
+                        pred = self.eval_model(model, X_train, y_train, X_test, y_test)
+                    for m in pred:
+                        metrics[m] += pred[m]
         for m in metrics:
             metrics[m] /= k
         return metrics
