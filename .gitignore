@@ -5,3 +5,5 @@ gene_expressions_to_reaction_fold_changes (copy).ipynb
 .ipynb_checkpoints
 __pycache__
 *.tar
+
+notebooks\Clustering.ipynb
