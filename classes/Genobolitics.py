@@ -1,11 +1,9 @@
 import math
 import warnings
-from functools import reduce, lru_cache
+from functools import reduce
 
-import pyhgnc
-import GEOparse
-import numpy as np
 from metabolitics.analysis import MetaboliticsAnalysis
+
 
 
 class FoldChange:
@@ -75,38 +73,3 @@ class Genobolitics(MetaboliticsAnalysis):
 
     def get_reaction_genes(self, reaction):
         return [g.id for g in reaction.genes]
-
-
-@lru_cache(maxsize=None)
-def lookup_gene(gene_symbol):
-    try:
-        query = lookup_gene.query
-    except Exception as e:
-        lookup_gene.query = query = pyhgnc.query()
-
-    return query.hgnc(symbol=gene_symbol)
-
-
-def get_genes_fold_changes(sample):
-    genes_fold_changes = dict()
-    for gene in np.unique(sample.index):
-        hgnc = lookup_gene(gene)
-
-        if hgnc:
-            genes_fold_changes["HGNC:{}".format(hgnc[0].identifier)] = np.median(sample.loc[gene])
-
-    return genes_fold_changes
-
-
-def parse_database(geo_database_name, labels, index_column="IDENTIFIER"):
-    geo_df = GEOparse.get_GEO(geo=geo_database_name).table.dropna().set_index(index_column)
-
-    X, y = [], []
-    for sample in labels.keys():
-        gene_fold_change = get_genes_fold_changes(geo_df[[sample]])
-        X.append(gene_fold_change)
-        y.append(labels[sample])
-
-        print("{} added with length {}".format(sample, len(gene_fold_change)))
-
-    return X, y
