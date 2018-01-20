@@ -5,7 +5,7 @@ gene_expressions_to_reaction_fold_changes (copy).ipynb
 .ipynb_checkpoints
 __pycache__
 *.tar
-
+*.tmp
 notebooks/Clustering.ipynb
 datasets/AgilentG4502A_07_3
 datasets/breast_cancer3_X

@@ -36,16 +36,17 @@ def get_genes_fold_changes_wrapper(sample_name, dataframe):
     return (sample_name, get_genes_fold_changes(dataframe[[sample_name]]))
 
 
-def parse_database(source, labels, index_column="IDENTIFIER"):
+def parse_database(source, labels, index_column="IDENTIFIER", n_jobs=-1):
     dataframe_uncleaned = get_geo_database(source) if type(source) is str else source
     dataframe_cleaned = dataframe_uncleaned.dropna().set_index(index_column)
 
     X, y = [], []
-    results = Parallel(verbose=5, n_jobs=-1)(delayed(get_genes_fold_changes_wrapper)(*args)
-                                             for args in product(labels.keys(), [dataframe_cleaned]))
+    results = Parallel(verbose=10, n_jobs=n_jobs)(delayed(get_genes_fold_changes_wrapper)(*args)
+                                                  for args in product(labels.keys(), [dataframe_cleaned]))
 
     for sample_name, fold_changes in results:
         X.append(fold_changes)
         y.append(labels[sample_name])
+        print("{} added with length {}".format(sample_name, len(fold_changes)))
 
     return X, y
