@@ -1,7 +1,12 @@
 import math
 from functools import reduce
-from metabolitics.analysis import MetaboliticsAnalysis
 import warnings
+
+from metabolitics.analysis import MetaboliticsAnalysis
+from metabolitics.preprocessing import MetaboliticsTransformer
+from sklearn_utils.preprocessing import FoldChangeScaler
+
+from sklearn.pipeline import Pipeline
 
 
 class FoldChange:
@@ -73,3 +78,13 @@ class Genobolitics(MetaboliticsAnalysis):
 
     def get_reaction_genes(self, reaction):
         return [g.id for g in reaction.genes]
+
+
+def flux_variance_analysis(X, y):
+    genobolitics_transformer = MetaboliticsTransformer()
+    genobolitics_transformer.analyzer = Genobolitics("recon2")
+
+    pipeline = Pipeline([('scaling', FoldChangeScaler(reference_label='healthy')),
+                         ('LP_FVA', genobolitics_transformer)])
+
+    return pipeline.fit_transform(X, y)
