@@ -1,9 +1,7 @@
 import math
-import warnings
 from functools import reduce
-
 from metabolitics.analysis import MetaboliticsAnalysis
-
+import warnings
 
 
 class FoldChange:
@@ -41,6 +39,8 @@ class Genobolitics(MetaboliticsAnalysis):
         self.model.solver.configuration.timeout = kwargs.get('timeout', 10 * 60)
 
     def set_objective(self, measured_genes):
+        warnings.filterwarnings("default")
+
         self.clean_objective()
         for r in self.model.reactions:
             fold_change = self.get_reaction_fold_change(r, measured_genes)
