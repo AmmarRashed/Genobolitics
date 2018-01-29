@@ -7,6 +7,8 @@ from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import GridSearchCV, cross_validate, StratifiedKFold
 from sklearn.preprocessing import StandardScaler
 
+from sklearn.datasets import make_classification
+
 import numpy as np, pandas as pd
 
 from genobolitics import *
@@ -66,7 +68,7 @@ def get_dataframe(X_dict, labels):
     return pd.DataFrame(samples, index=labels)
 
 
-def nested_cross_validation(X, y, pipelines, num_trials=10):
+def nested_cross_validation(X, y, pipelines, random_over_sampling=False, num_trials=10):
     metrics = ['f1', 'recall', 'precision', 'accuracy']
     trials = []
 
