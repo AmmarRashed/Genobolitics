@@ -6,8 +6,11 @@ gene_expressions_to_reaction_fold_changes (copy).ipynb
 __pycache__
 *.tar
 *.tmp
+<<<<<<< HEAD
 *.soft
 *.results
+=======
+>>>>>>> f59810552a0915b8ee9062b36421611cf0c5053c
 notebooks/Clustering.ipynb
 datasets/AgilentG4502A_07_3
 datasets/breast_cancer3_X
