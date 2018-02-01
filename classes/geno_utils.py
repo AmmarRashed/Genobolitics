@@ -36,7 +36,19 @@ def get_genes_fold_changes_wrapper(sample_name, dataframe):
     return (sample_name, get_genes_fold_changes(dataframe[[sample_name]]))
 
 
-def parse_database(source, labels, index_column="IDENTIFIER", n_jobs=-1):
+def parse_database(source, healthy_raw, unhealthy_raw, index_column="IDENTIFIER", n_jobs=-1):
+    clean = lambda string: string.replace(':', '').split()
+    predicate = lambda word: word.startswith('GSM')
+
+    healthy = set(filter(predicate, clean(healthy_raw)))
+    unhealthy = set(filter(predicate, clean(unhealthy_raw)))
+    sample_columns = list(healthy | unhealthy)
+
+    # If Xena, use this
+    source = source[["ID_REF", "IDENTIFIER"] + sample_columns]
+    source.dropna(inplace=True)
+    labels = dict([(h, 'healthy') for h in healthy] + [(d, 'unhealthy') for d in unhealthy])
+
     dataframe_uncleaned = get_geo_database(source) if type(source) is str else source
     dataframe_cleaned = dataframe_uncleaned.dropna().set_index(index_column)
 
