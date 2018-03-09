@@ -2,7 +2,7 @@
 
 # Data
 
-## Ammar Ra ̧sid - Abdurrahman Aboudakika
+## Ammar Rashed - Abdurrahman Aboudakika
 
 ## February 2018
 
