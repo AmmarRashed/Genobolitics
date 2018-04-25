@@ -1,0 +1,17 @@
+Recent queries in gds
+Search,Query,Items found,Time
+#17,"Search (""Neoplasms by site""[MeSH Terms]) AND normal[Subset Description] Filters: DataSets; : Homo sapiens| ; Expression profiling by array; : | ; Sample count from 20 to 10000 Sort by: NSAMD",24,14:08:46
+#16,"Search (""Neoplasms by site""[MeSH Terms]) AND normal[Subset Description] Filters: DataSets; : Homo sapiens| ; Expression profiling by array; :  Sort by: NSAMD",28,14:07:13
+#15,"Search (""Neoplasms by site""[MeSH Terms]) AND normal[Subset Description] Filters: DataSets; : Homo sapiens| ; Expression profiling by array Sort by: NSAMD",66,13:48:57
+#14,"Search (""Endocrine Gland Neoplasms""[MeSH Terms]) AND normal[Subset Description] Filters: DataSets; : Homo sapiens| ; Expression profiling by array Sort by: NSAMD",12,13:46:45
+#13,"Search (""Endocrine Gland Neoplasms""[MeSH Terms]) AND healthy[Subset Description] Filters: DataSets; : Homo sapiens| ; Expression profiling by array Sort by: NSAMD",1,13:46:35
+#12,"Search male[Subset Description] Filters: DataSets; : Homo sapiens| ; Expression profiling by array Sort by: NSAMD",74,13:46:13
+#11,"Search ""disease state""[All Fields] AND ""Homo Sapiens""[porgn] AND (""Ulcerative Colitis""[MeSH Terms] OR ""Ulcerative Colitis""[All Fields]) AND (""gds""[Filter] OR ""gse""[Filter] OR ""gsm""[Filter]) AND (""Expression profiling by array""[Filter] OR Expression profiling by high throughput sequencing[Filter]) Filters: DataSets; : Homo sapiens| ; Expression profiling by array Sort by: NSAMD",10,13:43:03
+#10,"Search GSM359972[Accession] Filters: DataSets; : Homo sapiens| ; Expression profiling by array Sort by: NSAMD",1,13:42:54
+#9,"Search (""Endocrine Gland Neoplasms""[MeSH Terms]) AND healthy Filters: DataSets; : Homo sapiens| ; Expression profiling by array Sort by: NSAMD",3,13:39:58
+#8,"Search (""Endocrine Gland Neoplasms""[MeSH Terms]) AND healthy Filters: DataSets; Expression profiling by array Sort by: NSAMD",4,13:39:47
+#7,"Search (""Endocrine Gland Neoplasms""[MeSH Terms]) AND healthy Filters: DataSets Sort by: NSAMD",4,13:39:41
+#5,"Search (""nervous system neoplasms""[MeSH Terms]) AND healthy Filters: DataSets Sort by: NSAMD",1,13:38:33
+#4,"Search (""nervous system neoplasms""[MeSH Terms]) AND healthy Sort by: NSAMD",146,13:38:18
+
+

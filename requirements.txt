@@ -40,7 +40,6 @@ lxml==4.1.1
 Markdown==2.6.11
 MarkupSafe==1.0
 matplotlib==2.1.1
-metabolitics==0.0.10
 mistune==0.8.3
 mpld3==0.3
 mpmath==1.0.0
@@ -79,7 +78,6 @@ Send2Trash==1.4.2
 simplegeneric==0.8.1
 six==1.11.0
 sklearn==0.0
-sklearn-utils==0.0.13
 SQLAlchemy==1.2.0
 swiglpk==1.4.4
 sympy==1.1.1
