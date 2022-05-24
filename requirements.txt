@@ -16,7 +16,7 @@ entrypoints==0.2.3
 enum34==1.1.6
 flasgger==0.8.0
 Flask==0.12.2
-Flask-Cors==3.0.3
+Flask-Cors==3.0.9
 future==0.16.0
 geojson==2.3.0
 GEOparse==1.0.5
