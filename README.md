@@ -63,14 +63,21 @@ See `requirements.txt` for the complete list.
 - Hierarchical clustering for disease ontology construction
 - Statistical significance analysis with ANOVA
 
-## How to Contribute
+## Project Context
 
-Contributions to this project are welcome. Please feel free to submit a pull request or open an issue for bugs, questions, or feature requests.
+This project was developed as a class project for the "Bioinformatics" course at Istanbul Şehir University, taught by [Prof. Ali Çakmak](https://scholar.google.com/citations?user=mBvj3CMAAAAJ&hl=en) in 2018. 
 
+<img src="sehir.png" alt="Istanbul Şehir University Logo" width="200"/>
+
+**Note:** Istanbul Şehir University was placed under the control of Marmara University in December 2019 and later had its permit to operate revoked in June 2020, with students transferred to Marmara University. This project was completed in 2018, prior to these events.
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Acknowledgements
 
-Thanks to Prof. Ali Çakmak and Muhammed Hasan Çelik for their support throughout the research cycle.
+Thanks to [Prof. Ali Çakmak](https://scholar.google.com/citations?user=mBvj3CMAAAAJ&hl=en) and Muhammed Hasan Çelik for their support throughout the research cycle.
+
+## How to Contribute
+
+Contributions to this project are welcome. Please feel free to submit a pull request or open an issue for bugs, questions, or feature requests.
