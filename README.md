@@ -1,6 +1,9 @@
 # Genobolitics
 
-Genobolitics is a bioinformatics tool that extends Metabolitics to include gene expression data for pathway-level analysis of diseases. This project aims to bridge the gap between genome-scale modeling and pathway-level analysis by integrating metabolic data with gene expression data.
+Genobolitics is a bioinformatics tool that extends [Metabolitics](https://metabolitics.readthedocs.io/en/latest/) to include gene expression data for pathway-level analysis of diseases. This project aims to bridge the gap between genome-scale modeling and pathway-level analysis by integrating metabolic data with gene expression data.
+
+Metabolitics is described in the paper:
+> Cakmak A, Celik MH. Personalized Metabolic Analysis of Diseases. IEEE/ACM Trans Comput Biol Bioinform. 2021 May-Jun;18(3):1014-1025. doi: 10.1109/TCBB.2020.3008196. [PubMed](https://pubmed.ncbi.nlm.nih.gov/32750887/)
 
 ## Project Overview
 
@@ -47,6 +50,7 @@ The project depends on several Python libraries including:
 - JobLib
 - GEOparse
 - PyHGNC
+- [Metabolitics](https://metabolitics.readthedocs.io/en/latest/)
 
 See `requirements.txt` for the complete list.
 
