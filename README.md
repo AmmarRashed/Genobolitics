@@ -76,7 +76,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Acknowledgements
 
-Thanks to [Prof. Ali Çakmak](https://scholar.google.com/citations?user=mBvj3CMAAAAJ&hl=en) and Muhammed Hasan Çelik for their support throughout the research cycle.
+Thanks to [Prof. Ali Çakmak](https://scholar.google.com/citations?user=mBvj3CMAAAAJ&hl=en) and [Muhammed Hasan Çelik](https://github.com/muhammedhasan) for their support throughout the research cycle.
 
 ## How to Contribute
 
